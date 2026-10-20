@@ -9,9 +9,15 @@ ArvoreBinariadeBusca::ArvoreBinariadeBusca() {
 }
 
 ArvoreBinariadeBusca::~ArvoreBinariadeBusca() {
+    deletarArvore(raiz);
 }
 
 void ArvoreBinariadeBusca::deletarArvore(No* Noatual) {
+    if(Noatual != NULL){
+        deletarArvore(Noatual->filhoesquerda);
+        deletarArvore(Noatual->filhodireita);
+        delete Noatual;
+    }
 }
 
 No* ArvoreBinariadeBusca::obterRaiz() {
@@ -68,6 +74,42 @@ void ArvoreBinariadeBusca::inserir(Aluno aluno) {
 }
 
 void ArvoreBinariadeBusca::remover(Aluno aluno) {
+    removerBusca(aluno, raiz);
+}
+
+void ArvoreBinariadeBusca::removerBusca(Aluno aluno, No*& noatual){
+    if(aluno.obterRa() < noatual->aluno.obterRa()){
+        removerBusca(aluno, noatual->filhoesquerda);
+    }else if(aluno.obterRa() > noatual->aluno.obterRa()){
+        removerBusca(aluno, noatual->filhodireita);
+    }else{
+        deletarNo(noatual);
+    }
+
+}
+
+void ArvoreBinariadeBusca::deletarNo(No*& noatual){
+    No* temp = noatual;
+    if(noatual->filhoesquerda == NULL){
+        noatual = noatual->filhodireita;
+        delete temp;
+    }else if(noatual->filhodireita == NULL){
+        noatual = noatual->filhoesquerda;
+        delete temp;
+    }else{
+        Aluno AlunoSucessor;
+        obterSucessor(AlunoSucessor, noatual);
+        noatual->aluno = AlunoSucessor;
+        removerBusca(AlunoSucessor, noatual->filhodireita);
+    }
+}
+
+void ArvoreBinariadeBusca::obterSucessor(Aluno& AlunoSucessor, No* temp){
+    temp = temp->filhodireita;
+    while(temp->filhoesquerda != NULL){
+        temp = temp->filhoesquerda;
+    }
+    AlunoSucessor = temp->aluno;
 }
 
 /*
@@ -97,10 +139,29 @@ void ArvoreBinariadeBusca::buscar(Aluno& aluno, bool& busca) {
 }
 
 void ArvoreBinariadeBusca::imprimirpreordem(No* Noatual) {
+    if(Noatual != NULL){
+        cout << Noatual->aluno.obterNome() << " :";
+        cout << Noatual->aluno.obterRa() << endl;
+
+        imprimirpreordem(Noatual->filhoesquerda);
+        imprimirpreordem(Noatual->filhodireita);
+    }
 }
 
 void ArvoreBinariadeBusca::imprimiremordem(No* Noatual) {
+    if(Noatual != NULL){
+        imprimiremordem(Noatual->filhoesquerda);
+        cout << Noatual->aluno.obterNome() << " :";
+        cout << Noatual->aluno.obterRa() << endl;
+        imprimiremordem(Noatual->filhodireita);
+    }
 }
 
 void ArvoreBinariadeBusca::imprimirposordem(No* Noatual) {
+    if(Noatual != NULL){
+        imprimirposordem(Noatual->filhoesquerda);
+        imprimirposordem(Noatual->filhodireita);
+        cout << Noatual->aluno.obterNome() << " :";
+        cout << Noatual->aluno.obterRa() << endl;
+    }
 }
